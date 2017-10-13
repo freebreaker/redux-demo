@@ -1,15 +1,16 @@
 import React from "react"
+import values from 'object.values';
 
 export default function formProvider(fields){
     return function(WarppedComponent){
         const initFormState={}
         for(const key in fields){
             initFormState[key]={
-                value:fields[key].defaultValue,
+                value:fields[key].value,
                 error:""
             }
         }
-        console.log(initFormState)
+
 
         class FormComponent extends React.Component{
             constructor(props){
@@ -35,7 +36,6 @@ export default function formProvider(fields){
                         valid=pattern(newField.value)
                     }else{
                         valid=pattern.test(newField.value)
-                        console.log(valid)
                     }
 
                     if(!valid){
@@ -46,9 +46,9 @@ export default function formProvider(fields){
                 }
 
                 const newForm={...form,[key]:newField}
+
                 const formValid = Object.values(newForm).every(f => f.valid);
-                console.log(newForm)
-                console.log(formValid)
+
 
                 this.setState({
                     form: newForm,
@@ -57,10 +57,32 @@ export default function formProvider(fields){
 
             }
 
+            setFormValue(value){
+                 if(!value){
+                     return 
+                 }
+                 const {form}=this.state
+                 let newForm={...form}
+                 for(const field in form){
+                     if(form.hasOwnProperty(field)){
+                         if(typeof value[field]!==undefined){
+                            newForm[field] = {...newForm[field], value: value.data[field]};
+
+                            newForm[field].valid = true
+                         }
+                     }
+                 }
+                 this.setState({form:newForm})
+
+                 
+            }
+
 
             render() {
                 const {form,formValid}=this.state
-                return <WarppedComponent {...this.props} form={form} formValid={formValid} onFormChange={this.handleChangeValue.bind(this)}/> 
+                return <WarppedComponent {...this.props} form={form} formValid={formValid}
+                setFormValue={this.setFormValue.bind(this)} 
+                onFormChange={this.handleChangeValue.bind(this)}/> 
             }
         }
 

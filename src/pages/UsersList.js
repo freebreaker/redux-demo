@@ -1,5 +1,6 @@
 import React from "react"
 import axios from "axios"
+import { Table, Icon } from 'antd';
 
 class UsersList extends React.Component{
     constructor(props){
@@ -9,61 +10,75 @@ class UsersList extends React.Component{
         }
     }
 
+    handleDelete(user){      
+      axios.delete("http://localhost:3001/user/"+ user.id)
+      .then((res)=>{
+        this.setState({
+          userslist:this.state.userslist.filter(item => item.id!=user.id)
+        })
+      }).catch((err)=> console.log(err))
+    }
+
+    handleEdit(user){
+      this.context.router.history.push('/user/edit/' + user.id);
+    }
+
     componentWillMount(){
-        console.log(998)
         axios.get("http://localhost:3001/user")
         .then((res)=>{
-
             this.setState({
                 userslist:res.data
             })
-
-            console.log(this.state)
-
         })
         .catch((err) => console.error(err));
     }
 
     render(){
-
         const {userslist}=this.state
+        const columns = [{
+          title: '姓名',
+          dataIndex: 'name',
+          key: 'name',
+          render: text => <a href="#">{text}</a>,
+        }, {
+          title: '年龄',
+          dataIndex: 'age',
+          key: 'age',
+        }, {
+          title: '操作',
+          key: 'action',
+          render: (text, record) => {
+            return (
+              <span>
+              {<a href="javascript:void(0)"  onClick={this.handleEdit.bind(this,text)}>编辑</a>}
+              <span className="ant-divider" />
+              {<a href="javascript:void(0)"  onClick={this.handleDelete.bind(this,text)}>删除</a>}
+              <span className="ant-divider" />
+            </span>
+            )
+          }
+        }];
 
+        const data= userslist.map((user) => {
+          console.log(user)
+          return {
+            user:user,
+            id:user.id,
+            key:user.id,         
+            name:user.name,
+            gender:user.gender,
+            age:user.age
+          }
+        }         
+        )
         return(
-        <div>
-        <header>
-          <h1>用户列表</h1>
-        </header>
-
-        <main>
-          <table>
-            <thead>
-              <tr>
-                <th>用户ID</th>
-                <th>用户名</th>
-                <th>性别</th>
-                <th>年龄</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {
-                userslist.map((user) => {
-                  return (
-                    <tr key={user.id}>
-                      <td>{user.id}</td>
-                      <td>{user.name}</td>
-                      <td>{user.gender}</td>
-                      <td>{user.age}</td>
-                    </tr>
-                  );
-                })
-              }
-            </tbody>
-          </table>
-        </main>
-        </div>
+          <Table columns={columns} dataSource={data} />
         )
     }
+}
+
+UsersList.contextTypes = {
+  router: React.PropTypes.object.isRequired
 }
 
 

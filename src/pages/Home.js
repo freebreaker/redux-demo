@@ -1,8 +1,14 @@
 import React from "react";
 import { BrowserRouter, Route, Link ,Switch} from "react-router-dom";
-
+import './Home.css';
 import AddUsers from "./AddUsers";
 import UsersList from "./UsersList";
+import EditPages from "./EditPages";
+import ChattingRoom from "./ChattingRoom";
+import 'antd/dist/antd.css'
+import { Form, Icon, Input, Button, Checkbox } from 'antd';
+const FormItem = Form.Item;
+
 
 class Home extends React.Component{
     render(){
@@ -12,6 +18,7 @@ class Home extends React.Component{
                     <h1>Hello World!</h1>
                     <Link to="/user/add">Add Users</Link>
                     <Link to="/user/list">UsersList</Link>
+                    <Link to="/user/chat">ChattingRoom</Link>
                 </header>
                 
 
@@ -19,6 +26,7 @@ class Home extends React.Component{
                     <Switch>
                     <Route path="/user/add" exact component={AddUsers} />
                     <Route path="/user/list" component={UsersList}/>
+                    <Route path="/user/edit/:id" component={EditPages}/>
                     </Switch>
                 </main>
             </div>
