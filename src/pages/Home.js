@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Link ,Switch} from "react-router-dom";
+import DevTools from '../containers/DevTools';
 import './Home.css';
 import AddUsers from "./AddUsers";
 import UsersList from "./UsersList";
@@ -27,6 +28,7 @@ class Home extends React.Component{
                     <Route path="/user/add" exact component={AddUsers} />
                     <Route path="/user/list" component={UsersList}/>
                     <Route path="/user/edit/:id" component={EditPages}/>
+                    <Route path="/user/chat" component={ChattingRoom}/>
                     </Switch>
                 </main>
             </div>
